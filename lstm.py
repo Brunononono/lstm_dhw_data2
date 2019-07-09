@@ -1,21 +1,28 @@
 # Import dependencies
 import pandas as pd
-import numpy as np
-import plotly
-import plotly.plotly as py
-import plotly.graph_objs as go
-
+import plotter
 from sklearn.model_selection import train_test_split
-from numpy import array
 from keras.models import Sequential
 from keras.layers import LSTM
 from keras.layers import Dense
-from keras.layers import Bidirectional
 
-data = pd.read_csv('features.csv')
+features = pd.read_csv('features.csv')
 labels = pd.read_csv('labels.csv')
+
+
+x_train, x_test, y_train, y_test = train_test_split(features,labels,test_size=0.2)
+
+
 model = Sequential()
-model.add(LSTM(24,return_sequences=True,input_shape=(3,)))
+
+model.add(LSTM(24,activation='relu',input_shape=(1,3)))
+
 model.add(Dense(1))
-model.compile(loss="mean_squared_error", optimizer="adam")
-model.fit(data, labels,  epochs=100,  batch_size=1,  verbose=1)
+
+model.compile(loss='mse', optimizer="adam")
+
+model.fit(x_train,y_train,epochs=60,verbose=2)
+
+results=model.predict(x_test)
+
+print(results)
